@@ -1,6 +1,8 @@
 # 실시간 학습 캔버스 (Realtime Learning Canvas)
 
 React Konva와 Supabase Realtime을 사용한 실시간 협업 캔버스 애플리케이션입니다. 선생님과 학생이 함께 문제를 풀고 학습할 수 있는 플랫폼입니다.
+방문하기 : [링크](https://realtime-canvas-gray.vercel.app/)
+
 
 ## 주요 기능
 
