@@ -26,6 +26,11 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onJoinRoom }) => {
     onJoinRoom();
   };
 
+  const generateRoomId = () => {
+    const id = Math.random().toString(36).substring(2, 8).toUpperCase();
+    setRoomId(id);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex items-center justify-center p-3 sm:p-4 md:p-6">
       {/* Desktop & Mobile Responsive Container */}
@@ -117,6 +122,13 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onJoinRoom }) => {
                 maxLength={8}
                 required
               />
+              <button
+                type="button"
+                onClick={generateRoomId}
+                className="px-5 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-semibold text-sm sm:text-base shadow-md hover:shadow-lg active:scale-95"
+              >
+                🎲 생성
+              </button>
             </div>
             <div className="mt-2 sm:mt-3 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
               <p className="text-xs sm:text-sm text-blue-700 flex items-start">
