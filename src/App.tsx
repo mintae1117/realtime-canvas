@@ -1,24 +1,42 @@
-import { useState } from "react";
-import { RoomSetup } from "./components/RoomSetup";
-import { CanvasRoom } from "./components/CanvasRoom";
-import { useCanvasStore } from "./store/canvasStore";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Layout } from "./components/layout/Layout";
+import { HomePage } from "./pages/HomePage";
+import { RealtimeCanvas } from "./pages/RealtimeCanvas";
+import { RealtimeChat } from "./pages/RealtimeChat";
+import { RealtimeFacetime } from "./pages/RealtimeFacetime";
+import { RealtimeMonitoring } from "./pages/RealtimeMonitoring";
+import { RealtimeLocation } from "./pages/RealtimeLocation";
 
-function App() {
-  const [hasJoined, setHasJoined] = useState(false);
-  const { roomId } = useCanvasStore();
+function AppContent() {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
-  const handleJoinRoom = () => {
-    setHasJoined(true);
-  };
+  if (isHomePage) {
+    return (
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>
+    );
+  }
 
   return (
-    <div className="h-full w-full min-h-screen" style={{ minWidth: "100vw" }}>
-      {!hasJoined || !roomId ? (
-        <RoomSetup onJoinRoom={handleJoinRoom} />
-      ) : (
-        <CanvasRoom />
-      )}
-    </div>
+    <Layout>
+      <Routes>
+        <Route path="/canvas" element={<RealtimeCanvas />} />
+        <Route path="/chat" element={<RealtimeChat />} />
+        <Route path="/facetime" element={<RealtimeFacetime />} />
+        <Route path="/monitoring" element={<RealtimeMonitoring />} />
+        <Route path="/location" element={<RealtimeLocation />} />
+      </Routes>
+    </Layout>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
 

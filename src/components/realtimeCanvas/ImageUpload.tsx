@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useCanvasStore } from "../store/canvasStore";
-import { type CanvasImage } from "../types/canvas";
+import { useCanvasStore } from "../../store/canvasStore";
+import { type CanvasImage } from "../../types/canvas";
 
 interface ImageUploadProps {
   onImageAdded?: (image: CanvasImage) => void;

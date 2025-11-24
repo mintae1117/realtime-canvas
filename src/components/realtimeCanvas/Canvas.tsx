@@ -7,8 +7,8 @@ import {
   Text as KonvaText,
 } from "react-konva";
 import { v4 as uuidv4 } from "uuid";
-import { useCanvasStore } from "../store/canvasStore";
-import { type DrawingLine } from "../types/canvas";
+import { useCanvasStore } from "../../store/canvasStore";
+import { type DrawingLine } from "../../types/canvas";
 import Konva from "konva";
 
 interface CanvasProps {

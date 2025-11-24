@@ -2,8 +2,8 @@ import React, { useRef } from "react";
 import { Canvas } from "./Canvas";
 import { Toolbar } from "./Toolbar";
 import { UserList } from "./UserList";
-import { useCanvasStore } from "../store/canvasStore";
-import { useRealtimeCanvas } from "../hooks/useRealtimeCanvas";
+import { useCanvasStore } from "../../store/canvasStore";
+import { useRealtimeCanvas } from "../../hooks/useRealtimeCanvas";
 
 export const CanvasRoom: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);

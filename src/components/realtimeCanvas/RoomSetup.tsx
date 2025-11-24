@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useCanvasStore, createUser } from "../store/canvasStore";
-import { type UserRole } from "../types/canvas";
+import { useCanvasStore, createUser } from "../../store/canvasStore";
+import { type UserRole } from "../../types/canvas";
 
 interface RoomSetupProps {
   onJoinRoom: () => void;

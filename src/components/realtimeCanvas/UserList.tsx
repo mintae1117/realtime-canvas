@@ -1,5 +1,5 @@
 import React from "react";
-import { useCanvasStore } from "../store/canvasStore";
+import { useCanvasStore } from "../../store/canvasStore";
 
 export const UserList: React.FC = () => {
   const { users, currentUser } = useCanvasStore();

@@ -1,6 +1,6 @@
 import React from "react";
-import { useCanvasStore } from "../store/canvasStore";
-import { type DrawingTool } from "../types/canvas";
+import { useCanvasStore } from "../../store/canvasStore";
+import { type DrawingTool } from "../../types/canvas";
 
 interface ToolbarProps {
   onClearCanvas?: () => void;
