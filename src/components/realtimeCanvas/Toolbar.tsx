@@ -77,18 +77,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         {/* Colors */}
         {currentTool !== "eraser" && currentTool !== "select" && (
           <div>
-            <h4 className="text-xs font-semibold mb-1.5 text-gray-500 uppercase tracking-wide">
-              색상
-            </h4>
-            <div className="grid grid-cols-8 gap-1">
+            <h3 className="text-sm font-semibold mb-2 text-gray-700">색상</h3>
+            <div className="flex flex-wrap gap-2">
               {colors.map((color) => (
                 <button
                   key={color.value}
                   onClick={() => setStrokeColor(color.value)}
-                  className={`w-5 h-5 rounded transition-all ${
+                  className={`w-8 h-8 rounded-full transition-all ${
                     strokeColor === color.value
-                      ? "ring-2 ring-blue-500 ring-offset-1"
-                      : "ring-1 ring-gray-300 hover:ring-gray-400"
+                      ? "ring-4 ring-blue-500 scale-110"
+                      : "ring-2 ring-gray-300 hover:scale-105"
                   }`}
                   style={{ backgroundColor: color.value }}
                   title={color.label}
@@ -171,12 +169,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       {currentTool !== "eraser" && currentTool !== "select" && (
         <div>
           <h3 className="text-sm font-semibold mb-2 text-gray-700">색상</h3>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="flex flex-wrap gap-2">
             {colors.map((color) => (
               <button
                 key={color.value}
                 onClick={() => setStrokeColor(color.value)}
-                className={`w-10 h-10 rounded-lg transition-all ${
+                className={`w-8 h-8 rounded-full transition-all ${
                   strokeColor === color.value
                     ? "ring-4 ring-blue-500 scale-110"
                     : "ring-2 ring-gray-300 hover:scale-105"

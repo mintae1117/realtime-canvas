@@ -184,11 +184,8 @@ export const CanvasRoom: React.FC = () => {
         {/* Desktop Panel Toggle Button */}
         <button
           onClick={() => setIsDesktopPanelOpen(!isDesktopPanelOpen)}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20
-            bg-white border border-r-0 rounded-l-lg shadow-md
-            p-1.5 hover:bg-gray-50 transition-all
-            items-center justify-center"
-          style={{ right: isDesktopPanelOpen ? "13rem" : "0" }}
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white rounded-lg p-1.5 items-center justify-center focus:outline-none"
+          style={{ right: isDesktopPanelOpen ? "13rem" : "15px" }}
         >
           {isDesktopPanelOpen ? (
             <IoChevronForward className="text-gray-600" />
