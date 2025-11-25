@@ -5,11 +5,13 @@ import { type DrawingTool } from "../../types/canvas";
 interface ToolbarProps {
   onClearCanvas?: () => void;
   onUploadImage?: () => void;
+  compact?: boolean;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
   onClearCanvas,
   onUploadImage,
+  compact = false,
 }) => {
   const {
     currentTool,
@@ -39,12 +41,109 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   ];
 
   const strokeWidths = [
-    { value: 1, label: "얇게" },
-    { value: 2, label: "보통" },
-    { value: 4, label: "두껍게" },
-    { value: 8, label: "매우 두껍게" },
+    { value: 1, label: "S" },
+    { value: 2, label: "M" },
+    { value: 4, label: "L" },
+    { value: 8, label: "XL" },
   ];
 
+  // Compact version for sidebar
+  if (compact) {
+    return (
+      <div className="space-y-3">
+        {/* Tools */}
+        <div>
+          <h4 className="text-xs font-semibold mb-1.5 text-gray-500 uppercase tracking-wide">
+            도구
+          </h4>
+          <div className="grid grid-cols-4 gap-1">
+            {tools.map((tool) => (
+              <button
+                key={tool.value}
+                onClick={() => setCurrentTool(tool.value)}
+                className={`p-1.5 rounded text-sm transition-all ${
+                  currentTool === tool.value
+                    ? "bg-blue-500 text-white shadow-sm"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+                title={tool.label}
+              >
+                {tool.icon}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Colors */}
+        {currentTool !== "eraser" && currentTool !== "select" && (
+          <div>
+            <h4 className="text-xs font-semibold mb-1.5 text-gray-500 uppercase tracking-wide">
+              색상
+            </h4>
+            <div className="grid grid-cols-8 gap-1">
+              {colors.map((color) => (
+                <button
+                  key={color.value}
+                  onClick={() => setStrokeColor(color.value)}
+                  className={`w-5 h-5 rounded transition-all ${
+                    strokeColor === color.value
+                      ? "ring-2 ring-blue-500 ring-offset-1"
+                      : "ring-1 ring-gray-300 hover:ring-gray-400"
+                  }`}
+                  style={{ backgroundColor: color.value }}
+                  title={color.label}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Stroke Width */}
+        {currentTool !== "select" && (
+          <div>
+            <h4 className="text-xs font-semibold mb-1.5 text-gray-500 uppercase tracking-wide">
+              {currentTool === "eraser" ? "크기" : "굵기"}
+            </h4>
+            <div className="flex gap-1">
+              {strokeWidths.map((width) => (
+                <button
+                  key={width.value}
+                  onClick={() => setStrokeWidth(width.value)}
+                  className={`flex-1 px-2 py-1 rounded text-xs font-medium transition-all ${
+                    strokeWidth === width.value
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {width.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex gap-1 pt-2 border-t border-gray-100">
+          <button
+            onClick={onUploadImage}
+            className="flex-1 p-1.5 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors"
+            title="이미지 업로드"
+          >
+            📷
+          </button>
+          <button
+            onClick={onClearCanvas}
+            className="flex-1 p-1.5 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+            title="전체 지우기"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Full version (for mobile bottom bar or standalone)
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 space-y-4">
       {/* Tools */}

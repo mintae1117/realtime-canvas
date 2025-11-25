@@ -9,6 +9,7 @@ import {
   IoLocationOutline,
   IoMenuOutline,
   IoCloseOutline,
+  IoChevronUpOutline,
 } from "react-icons/io5";
 
 interface LayoutProps {
@@ -17,6 +18,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isNavExpanded, setIsNavExpanded] = useState(false);
   const location = useLocation();
 
   const routes = [
@@ -31,7 +33,7 @@ export function Layout({ children }: LayoutProps) {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden">
+    <div className="flex h-screen w-screen overflow-hidden relative">
       {/* Mobile Menu Button - 모바일에서만 표시, 사이드바가 닫혔을 때만 */}
       {!isSidebarOpen && (
         <button
@@ -42,15 +44,14 @@ export function Layout({ children }: LayoutProps) {
         </button>
       )}
 
-      {/* Sidebar - 데스크톱에서는 왼쪽, 모바일에서는 토글 */}
+      {/* Mobile Sidebar - 모바일에서만 풀 사이드바 */}
       <aside
         className={`
-          fixed md:relative
-          md:flex
+          md:hidden
+          fixed
           ${isSidebarOpen ? "flex" : "hidden"}
           flex-col
           bg-white
-          md:w-64
           w-64
           h-full
           shadow-xl
@@ -61,10 +62,9 @@ export function Layout({ children }: LayoutProps) {
       >
         <div className="p-6 border-b flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-800">Navigation</h2>
-          {/* Close button - 모바일에서만 표시 */}
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden p-1 rounded-lg transition-colors bg-white"
+            className="p-1 rounded-lg transition-colors bg-white"
           >
             <IoCloseOutline className="text-2xl text-gray-700" />
           </button>
@@ -102,6 +102,70 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </aside>
 
+      {/* Desktop Mini Navbar - 왼쪽 하단에 최소화된 상태 */}
+      <div className="hidden md:block fixed bottom-4 left-4 z-40">
+        <div
+          className={`
+            bg-white rounded-2xl shadow-xl border border-gray-200
+            transition-all duration-300 ease-in-out
+            ${isNavExpanded ? "p-3" : "p-2"}
+          `}
+        >
+          {/* Expand/Collapse Toggle */}
+          <button
+            onClick={() => setIsNavExpanded(!isNavExpanded)}
+            className={`
+              w-full flex items-center justify-center p-2 rounded-xl
+              text-gray-500 hover:text-gray-700 hover:bg-gray-100
+              transition-all duration-200 mb-1
+            `}
+          >
+            <IoChevronUpOutline
+              className={`text-lg transition-transform duration-300 ${
+                isNavExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          {/* Navigation Icons */}
+          <nav
+            className={`
+              flex flex-col gap-1
+              transition-all duration-300 ease-in-out
+              ${isNavExpanded ? "opacity-100" : "opacity-100"}
+            `}
+          >
+            {routes.map((route) => {
+              const Icon = route.icon;
+              return (
+                <Link
+                  key={route.path}
+                  to={route.path}
+                  title={route.label}
+                  className={`
+                    flex items-center gap-3 p-2 rounded-xl
+                    transition-all duration-200
+                    ${
+                      isActive(route.path)
+                        ? "bg-blue-500 text-white shadow-md"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                    }
+                    ${isNavExpanded ? "px-4" : "justify-center"}
+                  `}
+                >
+                  <Icon className="text-xl flex-shrink-0" />
+                  {isNavExpanded && (
+                    <span className="font-medium text-sm whitespace-nowrap">
+                      {route.label}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
+
       {/* Overlay for mobile - 사이드바가 열렸을 때 배경 어둡게 */}
       {isSidebarOpen && (
         <div
@@ -111,7 +175,7 @@ export function Layout({ children }: LayoutProps) {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto w-full">{children}</main>
 
       {/* Mobile Footer Navigation - 모바일에서만 표시 */}
       <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-20">

@@ -1,16 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCanvasStore, createUser } from "../../store/canvasStore";
 import { type UserRole } from "../../types/canvas";
 
-interface RoomSetupProps {
-  onJoinRoom: () => void;
-}
-
-export const RoomSetup: React.FC<RoomSetupProps> = ({ onJoinRoom }) => {
+export const RoomSetup: React.FC = () => {
   const [name, setName] = useState("");
   const [role, setRole] = useState<UserRole>("student");
   const [roomId, setRoomId] = useState("");
   const { setCurrentUser, setRoomId: setStoreRoomId } = useCanvasStore();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +21,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onJoinRoom }) => {
     const user = createUser(name.trim(), role);
     setCurrentUser(user);
     setStoreRoomId(roomId.trim());
-    onJoinRoom();
+    navigate(`/canvas/${roomId.trim()}`);
   };
 
   const generateRoomId = () => {
