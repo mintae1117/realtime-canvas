@@ -9,7 +9,6 @@ import {
   IoLocationOutline,
   IoMenuOutline,
   IoCloseOutline,
-  IoChevronUpOutline,
 } from "react-icons/io5";
 
 interface LayoutProps {
@@ -18,7 +17,6 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isNavExpanded, setIsNavExpanded] = useState(false);
   const location = useLocation();
 
   const routes = [
@@ -104,61 +102,29 @@ export function Layout({ children }: LayoutProps) {
 
       {/* Desktop Mini Navbar - 왼쪽 하단에 최소화된 상태 */}
       <div className="hidden md:block fixed bottom-4 left-4 z-40">
-        <div
-          className={`
-            bg-white rounded-2xl shadow-xl border border-gray-200
-            transition-all duration-300 ease-in-out
-            ${isNavExpanded ? "p-3" : "p-2"}
-          `}
-        >
-          {/* Expand/Collapse Toggle */}
-          <button
-            onClick={() => setIsNavExpanded(!isNavExpanded)}
-            className={`
-              w-full flex items-center justify-center p-2 rounded-xl
-              text-gray-500 hover:text-gray-700 hover:bg-gray-100
-              transition-all duration-200 mb-1
-            `}
-          >
-            <IoChevronUpOutline
-              className={`text-lg transition-transform duration-300 ${
-                isNavExpanded ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-
-          {/* Navigation Icons */}
-          <nav
-            className={`
-              flex flex-col gap-1
-              transition-all duration-300 ease-in-out
-              ${isNavExpanded ? "opacity-100" : "opacity-100"}
-            `}
-          >
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-2">
+          <nav className="flex flex-col gap-1">
             {routes.map((route) => {
               const Icon = route.icon;
               return (
                 <Link
                   key={route.path}
                   to={route.path}
-                  title={route.label}
                   className={`
-                    flex items-center gap-3 p-2 rounded-xl
+                    group relative flex items-center justify-center p-2 rounded-xl
                     transition-all duration-200
                     ${
                       isActive(route.path)
                         ? "bg-blue-500 text-white shadow-md"
                         : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
                     }
-                    ${isNavExpanded ? "px-4" : "justify-center"}
                   `}
                 >
-                  <Icon className="text-xl flex-shrink-0" />
-                  {isNavExpanded && (
-                    <span className="font-medium text-sm whitespace-nowrap">
-                      {route.label}
-                    </span>
-                  )}
+                  <Icon className="text-xl" />
+                  {/* Tooltip */}
+                  <span className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    {route.label}
+                  </span>
                 </Link>
               );
             })}
