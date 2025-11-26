@@ -2,6 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCanvasStore, createUser } from "../../store/canvasStore";
 import { type UserRole } from "../../types/canvas";
+import {
+  FaBook,
+  FaChalkboardTeacher,
+  FaUserGraduate,
+  FaDice,
+  FaLightbulb,
+  FaRocket,
+} from "react-icons/fa";
 
 export const RoomSetup: React.FC = () => {
   const [name, setName] = useState("");
@@ -36,7 +44,7 @@ export const RoomSetup: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-6">
           <div className="text-center">
             <div className="mb-2">
-              <span className="text-4xl">📚</span>
+              <FaBook className="text-4xl text-white inline-block" />
             </div>
             <h1 className="text-xl font-bold text-white mb-1">
               실시간 학습 캔버스
@@ -80,7 +88,7 @@ export const RoomSetup: React.FC = () => {
                 }`}
               >
                 <div className="flex flex-col items-center space-y-1">
-                  <span className="text-xl">👨‍🏫</span>
+                  <FaChalkboardTeacher className="text-xl" />
                   <span>선생님</span>
                 </div>
               </button>
@@ -95,7 +103,7 @@ export const RoomSetup: React.FC = () => {
                 }`}
               >
                 <div className="flex flex-col items-center space-y-1">
-                  <span className="text-xl">👨‍🎓</span>
+                  <FaUserGraduate className="text-xl" />
                   <span>학생</span>
                 </div>
               </button>
@@ -122,13 +130,13 @@ export const RoomSetup: React.FC = () => {
                 onClick={generateRoomId}
                 className="px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all text-sm shadow-md active:scale-95"
               >
-                🎲 생성
+                <FaDice className="inline-block mr-1" /> 생성
               </button>
             </div>
 
             <div className="mt-2 p-2 bg-blue-50 rounded-lg border text-xs border-blue-100">
               <p className="text-blue-700 flex items-start">
-                <span className="mr-1 mt-0.5">💡</span>
+                <FaLightbulb className="mr-1 mt-0.5 flex-shrink-0 text-yellow-500" />
                 <span>
                   같은 방 ID를 사용하면 여러 명이 함께 학습할 수 있어요
                 </span>
@@ -143,7 +151,7 @@ export const RoomSetup: React.FC = () => {
           >
             <span className="flex items-center justify-center space-x-2">
               <span>입장하기</span>
-              <span className="text-xl">🚀</span>
+              <FaRocket className="text-xl" />
             </span>
           </button>
         </form>
