@@ -1,9 +1,13 @@
+import { FaMapMarkerAlt } from "react-icons/fa";
+
 export function RealtimeLocation() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 flex items-center justify-center p-8 pb-20 md:pb-8">
       <div className="max-w-4xl w-full">
         <div className="bg-white rounded-xl shadow-2xl p-12 text-center">
-          <div className="text-8xl mb-6">📍</div>
+          <div className="mb-6 flex justify-center">
+            <FaMapMarkerAlt className="text-8xl text-red-500" />
+          </div>
           <h1 className="text-4xl font-bold mb-4 text-gray-800">
             Realtime Location
           </h1>

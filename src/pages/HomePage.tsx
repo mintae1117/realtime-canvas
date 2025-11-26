@@ -1,4 +1,11 @@
 import { Link } from "react-router-dom";
+import {
+  FaPaintBrush,
+  FaComments,
+  FaVideo,
+  FaChartBar,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
 
 export function HomePage() {
   const routes = [
@@ -6,31 +13,31 @@ export function HomePage() {
       path: "/canvas",
       title: "Realtime Canvas",
       description: "실시간 협업 캔버스",
-      icon: "🎨",
+      icon: <FaPaintBrush className="text-6xl text-indigo-500" />,
     },
     {
       path: "/chat",
       title: "Realtime Chat",
       description: "실시간 채팅",
-      icon: "💬",
+      icon: <FaComments className="text-6xl text-blue-500" />,
     },
     {
       path: "/facetime",
       title: "Realtime Facetime",
       description: "실시간 화상 통화",
-      icon: "📹",
+      icon: <FaVideo className="text-6xl text-green-500" />,
     },
     {
       path: "/monitoring",
       title: "Realtime Monitoring",
       description: "실시간 모니터링",
-      icon: "📊",
+      icon: <FaChartBar className="text-6xl text-orange-500" />,
     },
     {
       path: "/location",
       title: "Realtime Location",
       description: "실시간 위치 공유",
-      icon: "📍",
+      icon: <FaMapMarkerAlt className="text-6xl text-red-500" />,
     },
   ];
 
@@ -51,7 +58,7 @@ export function HomePage() {
               to={route.path}
               className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 hover:scale-105 transform"
             >
-              <div className="text-6xl mb-4">{route.icon}</div>
+              <div className="mb-4">{route.icon}</div>
               <h2 className="text-2xl font-bold mb-2 text-gray-800">
                 {route.title}
               </h2>
