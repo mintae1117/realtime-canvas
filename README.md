@@ -1,4 +1,4 @@
-# 실시간 학습 캔버스 (Realtime Learning Canvas)
+# Realtime Learning
 
 방문하기 : [링크](https://realtime-canvas-gray.vercel.app/)
 
