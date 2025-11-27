@@ -25,6 +25,7 @@ function AppContent() {
         <Route path="/canvas" element={<RealtimeCanvas />} />
         <Route path="/canvas/:roomId" element={<RealtimeCanvas />} />
         <Route path="/chat" element={<RealtimeChat />} />
+        <Route path="/chat/:roomId" element={<RealtimeChat />} />
         <Route path="/facetime" element={<RealtimeFacetime />} />
         <Route path="/monitoring" element={<RealtimeMonitoring />} />
         <Route path="/location" element={<RealtimeLocation />} />
