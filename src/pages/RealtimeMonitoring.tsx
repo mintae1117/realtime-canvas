@@ -1,24 +1,34 @@
-import { FaChartBar } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  MonitoringSetup,
+  MonitoringDashboard,
+} from "../components/realtimeMonitoring";
+import { useMonitoringStore } from "../store/monitoringStore";
 
 export function RealtimeMonitoring() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 flex items-center justify-center p-8 pb-20 md:pb-8">
-      <div className="max-w-4xl w-full">
-        <div className="bg-white rounded-xl shadow-2xl p-12 text-center">
-          <div className="mb-6 flex justify-center">
-            <FaChartBar className="text-8xl text-orange-500" />
-          </div>
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">
-            Realtime Monitoring
-          </h1>
-          <p className="text-gray-600 text-lg mb-8">
-            실시간 모니터링 기능이 곧 구현될 예정입니다
-          </p>
-          <div className="bg-gray-50 rounded-lg p-6">
-            <p className="text-gray-500">Coming Soon...</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const { cryptoId: urlCryptoId } = useParams<{ cryptoId: string }>();
+  const { selectedCryptoId, setSelectedCryptoId, resetStore } =
+    useMonitoringStore();
+
+  // Sync URL cryptoId with store
+  useEffect(() => {
+    if (urlCryptoId && urlCryptoId !== selectedCryptoId) {
+      setSelectedCryptoId(urlCryptoId);
+    }
+  }, [urlCryptoId, selectedCryptoId, setSelectedCryptoId]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      resetStore();
+    };
+  }, [resetStore]);
+
+  // Show setup if no crypto selected
+  if (!urlCryptoId) {
+    return <MonitoringSetup />;
+  }
+
+  return <MonitoringDashboard />;
 }
