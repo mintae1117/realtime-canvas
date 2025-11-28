@@ -39,7 +39,7 @@ export const ChatRoomSetup: React.FC = () => {
             </div>
             <h1 className="text-xl font-bold text-white mb-1">실시간 채팅</h1>
             <p className="text-green-100 text-sm">
-              친구들과 실시간으로 대화해요
+              친구들과 실시간으로 채팅해요
             </p>
           </div>
         </div>
