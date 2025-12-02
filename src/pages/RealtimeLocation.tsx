@@ -1,24 +1,37 @@
-import { FaMapMarkerAlt } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  LocationSetup,
+  LocationDashboard,
+} from "../components/realtimeLocation";
+import { useLocationStore } from "../store/locationStore";
 
 export function RealtimeLocation() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 flex items-center justify-center p-8 pb-20 md:pb-8">
-      <div className="max-w-4xl w-full">
-        <div className="bg-white rounded-xl shadow-2xl p-12 text-center">
-          <div className="mb-6 flex justify-center">
-            <FaMapMarkerAlt className="text-8xl text-red-500" />
-          </div>
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">
-            Realtime Location
-          </h1>
-          <p className="text-gray-600 text-lg mb-8">
-            실시간 위치 공유 기능이 곧 구현될 예정입니다
-          </p>
-          <div className="bg-gray-50 rounded-lg p-6">
-            <p className="text-gray-500">Coming Soon...</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const { satelliteId: urlSatelliteId } = useParams<{ satelliteId: string }>();
+  const { selectedSatelliteId, setSelectedSatelliteId, resetStore } =
+    useLocationStore();
+
+  // Sync URL satelliteId with store
+  useEffect(() => {
+    if (urlSatelliteId) {
+      const satId = parseInt(urlSatelliteId, 10);
+      if (!isNaN(satId) && satId !== selectedSatelliteId) {
+        setSelectedSatelliteId(satId);
+      }
+    }
+  }, [urlSatelliteId, selectedSatelliteId, setSelectedSatelliteId]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      resetStore();
+    };
+  }, [resetStore]);
+
+  // Show setup if no satellite selected
+  if (!urlSatelliteId) {
+    return <LocationSetup />;
+  }
+
+  return <LocationDashboard />;
 }

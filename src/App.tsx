@@ -31,6 +31,7 @@ function AppContent() {
         <Route path="/monitoring" element={<RealtimeMonitoring />} />
         <Route path="/monitoring/:cryptoId" element={<RealtimeMonitoring />} />
         <Route path="/location" element={<RealtimeLocation />} />
+        <Route path="/location/:satelliteId" element={<RealtimeLocation />} />
       </Routes>
     </Layout>
   );
