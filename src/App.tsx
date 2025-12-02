@@ -5,6 +5,7 @@ import { RealtimeCanvas } from "./pages/RealtimeCanvas";
 import { RealtimeChat } from "./pages/RealtimeChat";
 import { RealtimeFacetime } from "./pages/RealtimeFacetime";
 import { RealtimeMonitoring } from "./pages/RealtimeMonitoring";
+import { SatelliteLocation } from "./pages/SatelliteLocation";
 import { RealtimeLocation } from "./pages/RealtimeLocation";
 
 function AppContent() {
@@ -30,8 +31,9 @@ function AppContent() {
         <Route path="/facetime/:roomId" element={<RealtimeFacetime />} />
         <Route path="/monitoring" element={<RealtimeMonitoring />} />
         <Route path="/monitoring/:cryptoId" element={<RealtimeMonitoring />} />
+        <Route path="/satellite" element={<SatelliteLocation />} />
+        <Route path="/satellite/:satelliteId" element={<SatelliteLocation />} />
         <Route path="/location" element={<RealtimeLocation />} />
-        <Route path="/location/:satelliteId" element={<RealtimeLocation />} />
       </Routes>
     </Layout>
   );

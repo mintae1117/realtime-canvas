@@ -9,6 +9,7 @@ import {
   IoLocationOutline,
   IoMenuOutline,
   IoCloseOutline,
+  IoPlanetOutline,
 } from "react-icons/io5";
 
 interface LayoutProps {
@@ -25,6 +26,7 @@ export function Layout({ children }: LayoutProps) {
     { path: "/chat", icon: IoChatbubbleEllipsesOutline, label: "채팅" },
     { path: "/facetime", icon: IoVideocamOutline, label: "화상통화" },
     { path: "/monitoring", icon: IoStatsChartOutline, label: "모니터링" },
+    { path: "/satellite", icon: IoPlanetOutline, label: "위성위치" },
     { path: "/location", icon: IoLocationOutline, label: "위치공유" },
   ];
 

@@ -5,6 +5,7 @@ import {
   FaVideo,
   FaChartBar,
   FaMapMarkerAlt,
+  FaSatellite,
 } from "react-icons/fa";
 
 export function HomePage() {
@@ -32,6 +33,12 @@ export function HomePage() {
       title: "Realtime Monitoring",
       description: "실시간 모니터링",
       icon: <FaChartBar className="text-6xl text-orange-500" />,
+    },
+    {
+      path: "/satellite",
+      title: "Satellite Location",
+      description: "실시간 위성 위치 추적",
+      icon: <FaSatellite className="text-6xl text-purple-500" />,
     },
     {
       path: "/location",

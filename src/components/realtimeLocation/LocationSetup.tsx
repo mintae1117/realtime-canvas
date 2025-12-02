@@ -16,7 +16,7 @@ export const LocationSetup: React.FC = () => {
   const handleSelectISS = () => {
     clearPositionHistory();
     setSelectedSatelliteId(ISS_SATELLITE.id);
-    navigate(`/location/${ISS_SATELLITE.id}`);
+    navigate(`/satellite/${ISS_SATELLITE.id}`);
   };
 
   return (

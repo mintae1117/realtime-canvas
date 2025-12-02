@@ -26,7 +26,7 @@ export const LocationDashboard: React.FC = () => {
   useRealtimeSatellite();
 
   const handleBack = () => {
-    navigate("/location");
+    navigate("/satellite");
   };
 
   return (
