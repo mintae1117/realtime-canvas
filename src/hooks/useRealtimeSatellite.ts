@@ -4,10 +4,10 @@ import {
   type SatellitePosition,
 } from "../store/locationStore";
 
-// N2YO API - Free tier allows 1000 requests/hour
-// For demo purposes, we'll simulate with realistic data
-const DEMO_MODE = true; // Set to false when you have an API key
-const N2YO_API_KEY = "YOUR_API_KEY_HERE";
+// Where The ISS At API - Free, no API key required
+// https://wheretheiss.at/w/developer
+const ISS_API_BASE = "https://api.wheretheiss.at/v1/satellites";
+const ISS_NORAD_ID = 25544;
 
 export const useRealtimeSatellite = () => {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -44,106 +44,111 @@ export const useRealtimeSatellite = () => {
     }
   }, [setUserLocation]);
 
-  // Simulate realistic satellite position for demo
-  const simulateSatellitePosition = useCallback(
-    (satId: number): SatellitePosition => {
-      const now = Date.now();
-      // ISS orbits Earth every ~92 minutes at ~7.66 km/s
-      // Generate realistic orbital movement
-      const orbitalPeriod = 92 * 60 * 1000; // 92 minutes in ms
-      const progress = (now % orbitalPeriod) / orbitalPeriod;
+  // Calculate azimuth and elevation from observer to satellite
+  const calculateObserverAngles = useCallback(
+    (
+      satLat: number,
+      satLng: number,
+      satAlt: number,
+      obsLat: number,
+      obsLng: number
+    ) => {
+      const toRad = (deg: number) => (deg * Math.PI) / 180;
+      const toDeg = (rad: number) => (rad * 180) / Math.PI;
 
-      // Simulate orbital path with inclination
-      const inclination = 51.6; // ISS inclination in degrees
-      const longitude = ((progress * 360 - 180) % 360) - 180;
-      const latitude = Math.sin(progress * Math.PI * 2) * inclination;
+      const lat1 = toRad(obsLat);
+      const lat2 = toRad(satLat);
+      const dLng = toRad(satLng - obsLng);
 
-      // Add some variation based on satellite ID
-      const latOffset = (satId % 10) * 0.5;
-      const lngOffset = (satId % 7) * 2;
+      // Azimuth calculation
+      const y = Math.sin(dLng) * Math.cos(lat2);
+      const x =
+        Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+      let azimuth = toDeg(Math.atan2(y, x));
+      azimuth = (azimuth + 360) % 360;
 
-      const satelliteNames: Record<number, string> = {
-        25544: "ISS (ZARYA)",
-        48274: "CSS (TIANHE)",
-        20580: "Hubble Space Telescope",
-        43013: "Starlink-24",
-        25994: "Terra",
-        27424: "Aqua",
-        33591: "NOAA 19",
-        41866: "GOES 16",
-      };
+      // Simple elevation approximation
+      const R = 6371; // Earth radius in km
+      const dLat = toRad(satLat - obsLat);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1) *
+          Math.cos(lat2) *
+          Math.sin(dLng / 2) *
+          Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const groundDistance = R * c;
 
-      return {
-        satid: satId,
-        satname: satelliteNames[satId] || `Satellite ${satId}`,
-        satlatitude: latitude + latOffset,
-        satlongitude: longitude + lngOffset,
-        sataltitude: 408 + (satId % 100), // ~408km for ISS
-        azimuth: (progress * 360) % 360,
-        elevation: 45 + Math.sin(progress * Math.PI * 4) * 30,
-        ra: (progress * 24) % 24,
-        dec: latitude,
-        timestamp: Math.floor(now / 1000),
-      };
+      const elevation = toDeg(Math.atan2(satAlt - 0, groundDistance));
+
+      return { azimuth, elevation };
     },
     []
   );
 
-  // Fetch satellite position from N2YO API
-  const fetchSatellitePosition = useCallback(
-    async (satId: number, obsLat: number, obsLng: number) => {
-      if (DEMO_MODE) {
-        return simulateSatellitePosition(satId);
-      }
-
+  // Fetch ISS position from Where The ISS At API
+  const fetchISSPosition =
+    useCallback(async (): Promise<SatellitePosition | null> => {
       try {
-        const response = await fetch(
-          `https://api.n2yo.com/rest/v1/satellite/positions/${satId}/${obsLat}/${obsLng}/0/1/&apiKey=${N2YO_API_KEY}`
-        );
+        const response = await fetch(`${ISS_API_BASE}/${ISS_NORAD_ID}`);
 
         if (!response.ok) {
-          throw new Error("Failed to fetch satellite position");
+          throw new Error("Failed to fetch ISS position");
         }
 
         const data = await response.json();
-        if (data.positions && data.positions.length > 0) {
-          const pos = data.positions[0];
-          return {
-            satid: data.info.satid,
-            satname: data.info.satname,
-            satlatitude: pos.satlatitude,
-            satlongitude: pos.satlongitude,
-            sataltitude: pos.sataltitude,
-            azimuth: pos.azimuth,
-            elevation: pos.elevation,
-            ra: pos.ra,
-            dec: pos.dec,
-            timestamp: pos.timestamp,
-          } as SatellitePosition;
-        }
-        return null;
-      } catch (err) {
-        console.error("Error fetching satellite position:", err);
-        // Fallback to simulation on error
-        return simulateSatellitePosition(satId);
-      }
-    },
-    [simulateSatellitePosition]
-  );
 
-  // Start tracking satellite
+        // Calculate observer angles if user location is available
+        let azimuth = 0;
+        let elevation = 0;
+
+        if (userLocation) {
+          const angles = calculateObserverAngles(
+            data.latitude,
+            data.longitude,
+            data.altitude,
+            userLocation.lat,
+            userLocation.lng
+          );
+          azimuth = angles.azimuth;
+          elevation = angles.elevation;
+        }
+
+        return {
+          satid: data.id,
+          satname: data.name,
+          satlatitude: data.latitude,
+          satlongitude: data.longitude,
+          sataltitude: data.altitude,
+          azimuth,
+          elevation,
+          timestamp: data.timestamp,
+          velocity: data.velocity,
+          visibility: data.visibility,
+        };
+      } catch (err) {
+        console.error("Error fetching ISS position:", err);
+        setError("ISS 데이터를 가져오는데 실패했습니다");
+        return null;
+      }
+    }, [userLocation, calculateObserverAngles]);
+
+  // Start tracking ISS
   const startTracking = useCallback(() => {
     if (!selectedSatelliteId || !userLocation) return;
+
+    // Only track ISS (real API)
+    if (selectedSatelliteId !== ISS_NORAD_ID) {
+      setError("ISS만 실시간 추적이 가능합니다");
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
 
     const updatePosition = async () => {
-      const position = await fetchSatellitePosition(
-        selectedSatelliteId,
-        userLocation.lat,
-        userLocation.lng
-      );
+      const position = await fetchISSPosition();
 
       if (position) {
         setSelectedSatellite(position);
@@ -156,12 +161,12 @@ export const useRealtimeSatellite = () => {
     // Initial fetch
     updatePosition();
 
-    // Update every 2 seconds
-    intervalRef.current = setInterval(updatePosition, 2000);
+    // Update every 3 seconds
+    intervalRef.current = setInterval(updatePosition, 3000);
   }, [
     selectedSatelliteId,
     userLocation,
-    fetchSatellitePosition,
+    fetchISSPosition,
     setSelectedSatellite,
     addPositionToHistory,
     setIsConnected,

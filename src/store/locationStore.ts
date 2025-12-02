@@ -18,9 +18,9 @@ export interface SatellitePosition {
   sataltitude: number;
   azimuth: number;
   elevation: number;
-  ra: number;
-  dec: number;
   timestamp: number;
+  velocity?: number;
+  visibility?: string;
 }
 
 export interface SatelliteCategory {
@@ -29,21 +29,12 @@ export interface SatelliteCategory {
   description: string;
 }
 
-// Popular satellite categories
-export const SATELLITE_CATEGORIES: SatelliteCategory[] = [
-  {
-    id: 25544,
-    name: "ISS (ZARYA)",
-    description: "International Space Station",
-  },
-  { id: 48274, name: "CSS (TIANHE)", description: "Chinese Space Station" },
-  { id: 20580, name: "Hubble Space Telescope", description: "Space Telescope" },
-  { id: 43013, name: "Starlink-24", description: "SpaceX Starlink Satellite" },
-  { id: 25994, name: "Terra", description: "Earth Observation Satellite" },
-  { id: 27424, name: "Aqua", description: "Earth Science Satellite" },
-  { id: 33591, name: "NOAA 19", description: "Weather Satellite" },
-  { id: 41866, name: "GOES 16", description: "Weather Satellite" },
-];
+// ISS - Real API data from Where The ISS At
+export const ISS_SATELLITE = {
+  id: 25544,
+  name: "ISS (ZARYA)",
+  description: "International Space Station - 실시간 API 데이터",
+};
 
 interface LocationStore {
   // Selected satellite

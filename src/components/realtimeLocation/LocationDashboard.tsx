@@ -1,9 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  useLocationStore,
-  SATELLITE_CATEGORIES,
-} from "../../store/locationStore";
+import { useLocationStore, ISS_SATELLITE } from "../../store/locationStore";
 import { useRealtimeSatellite } from "../../hooks/useRealtimeSatellite";
 import { SatelliteMap } from "./SatelliteMap";
 import { SatelliteInfo } from "./SatelliteInfo";
@@ -12,12 +9,12 @@ import {
   FaSatellite,
   FaMapMarkerAlt,
   FaHistory,
+  FaCheckCircle,
 } from "react-icons/fa";
 
 export const LocationDashboard: React.FC = () => {
   const navigate = useNavigate();
   const {
-    selectedSatelliteId,
     selectedSatellite,
     positionHistory,
     userLocation,
@@ -31,14 +28,6 @@ export const LocationDashboard: React.FC = () => {
   const handleBack = () => {
     navigate("/location");
   };
-
-  const handleChangeSatellite = (satId: number) => {
-    navigate(`/location/${satId}`);
-  };
-
-  const currentSatelliteInfo = SATELLITE_CATEGORIES.find(
-    (s) => s.id === selectedSatelliteId
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 p-4 pb-20 md:pb-4">
@@ -55,26 +44,25 @@ export const LocationDashboard: React.FC = () => {
             <div>
               <h1 className="text-xl font-bold text-white flex items-center gap-2">
                 <FaSatellite className="text-teal-400" />
-                {currentSatelliteInfo?.name || "위성 추적"}
+                {ISS_SATELLITE.name}
+                <span className="ml-2 px-2 py-0.5 bg-green-500/20 text-green-400 text-xs font-semibold rounded-full flex items-center gap-1">
+                  <FaCheckCircle className="text-xs" />
+                  LIVE API
+                </span>
               </h1>
               <p className="text-gray-400 text-sm">
-                {currentSatelliteInfo?.description}
+                {ISS_SATELLITE.description}
               </p>
             </div>
           </div>
 
-          {/* Satellite Selector */}
-          <select
-            value={selectedSatelliteId || ""}
-            onChange={(e) => handleChangeSatellite(Number(e.target.value))}
-            className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-teal-400"
-          >
-            {SATELLITE_CATEGORIES.map((sat) => (
-              <option key={sat.id} value={sat.id} className="bg-gray-800">
-                {sat.name}
-              </option>
-            ))}
-          </select>
+          {/* API Source Badge */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-green-500/10 border border-green-500/30 rounded-lg">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-green-400 text-xs font-medium">
+              wheretheiss.at API
+            </span>
+          </div>
         </div>
 
         {/* Main Content */}
@@ -138,6 +126,19 @@ export const LocationDashboard: React.FC = () => {
                 </p>
               </div>
             </div>
+
+            {/* Velocity Info */}
+            {selectedSatellite?.velocity && (
+              <div className="mt-3 p-3 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-lg border border-teal-500/30">
+                <div className="flex items-center justify-between">
+                  <span className="text-teal-400 text-sm">현재 속도</span>
+                  <span className="text-white font-mono font-bold">
+                    {selectedSatellite.velocity.toFixed(2)} km/s (
+                    {(selectedSatellite.velocity * 3600).toFixed(0)} km/h)
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Satellite Info Panel */}
@@ -168,16 +169,30 @@ export const LocationDashboard: React.FC = () => {
               </div>
             )}
 
-            {/* Instructions */}
+            {/* Real API Info */}
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+              <h4 className="text-sm font-semibold text-green-800 mb-2 flex items-center gap-2">
+                <FaCheckCircle className="text-green-500" />
+                실제 API 데이터
+              </h4>
+              <ul className="text-xs text-green-700 space-y-1">
+                <li>• Where The ISS At API 실시간 연동</li>
+                <li>• 3초마다 실제 위성 위치 업데이트</li>
+                <li>• 시뮬레이션 아닌 실제 궤도 데이터</li>
+                <li>• API 키 불필요 (무료)</li>
+              </ul>
+            </div>
+
+            {/* ISS Facts */}
             <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-4 border border-teal-100">
               <h4 className="text-sm font-semibold text-teal-800 mb-2">
-                실시간 위성 추적
+                ISS 정보
               </h4>
               <ul className="text-xs text-teal-700 space-y-1">
-                <li>• 위성 위치가 2초마다 업데이트됩니다</li>
-                <li>• 노란색 궤적은 최근 이동 경로입니다</li>
-                <li>• ISS는 약 92분에 지구를 한 바퀴 돕니다</li>
-                <li>• 앙각이 0° 이상이면 육안 관측이 가능할 수 있습니다</li>
+                <li>• 약 92분에 지구를 한 바퀴 돕니다</li>
+                <li>• 하루에 약 16번의 일출과 일몰을 경험</li>
+                <li>• 앙각이 0° 이상이면 관측 가능</li>
+                <li>• 1998년부터 운영 중</li>
               </ul>
             </div>
           </div>
