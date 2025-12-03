@@ -13,12 +13,17 @@ export const LocationMap: React.FC = () => {
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<Map<string, any>>(new Map());
   const overlaysRef = useRef<Map<string, any>>(new Map());
+  const initializedRef = useRef(false);
+  const scriptLoadedRef = useRef(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const { currentUser, users } = useRealtimeLocationStore();
 
   // Initialize Kakao Map
   useEffect(() => {
+    // Prevent double initialization
+    if (initializedRef.current) return;
+
     const loadKakaoMap = () => {
       if (window.kakao && window.kakao.maps) {
         window.kakao.maps.load(() => {
@@ -31,6 +36,7 @@ export const LocationMap: React.FC = () => {
               mapRef.current,
               options
             );
+            initializedRef.current = true;
             setIsMapLoaded(true);
           }
         });
@@ -40,8 +46,9 @@ export const LocationMap: React.FC = () => {
     // Check if Kakao Maps is already loaded
     if (window.kakao && window.kakao.maps) {
       loadKakaoMap();
-    } else {
+    } else if (!scriptLoadedRef.current) {
       // Load Kakao Maps script dynamically
+      scriptLoadedRef.current = true;
       const script = document.createElement("script");
       script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${
         import.meta.env.VITE_KAKAO_MAP_KEY
@@ -51,139 +58,157 @@ export const LocationMap: React.FC = () => {
       document.head.appendChild(script);
     }
 
-    return () => {
-      // Cleanup markers and overlays
-      markersRef.current.forEach((marker) => marker.setMap(null));
-      overlaysRef.current.forEach((overlay) => overlay.setMap(null));
-      markersRef.current.clear();
-      overlaysRef.current.clear();
-    };
+    // No cleanup - keep map instance alive
   }, []);
 
   // Update markers when users change
   useEffect(() => {
-    if (!isMapLoaded || !mapInstanceRef.current) return;
+    if (!isMapLoaded || !mapInstanceRef.current || !window.kakao?.maps) return;
 
-    const map = mapInstanceRef.current;
-    const allUsers = currentUser ? [currentUser, ...users] : users;
-    const currentUserIds = new Set(allUsers.map((u) => u.id));
+    try {
+      const map = mapInstanceRef.current;
+      const allUsers = currentUser ? [currentUser, ...users] : users;
+      const currentUserIds = new Set(allUsers.map((u) => u.id));
 
-    // Remove markers for users who left
-    markersRef.current.forEach((marker, oduderId) => {
-      if (!currentUserIds.has(oduderId)) {
-        marker.setMap(null);
-        markersRef.current.delete(oduderId);
-        const overlay = overlaysRef.current.get(oduderId);
-        if (overlay) {
-          overlay.setMap(null);
-          overlaysRef.current.delete(oduderId);
+      // Remove markers for users who left
+      markersRef.current.forEach((marker, oduderId) => {
+        if (oduderId === "initialized") return; // Skip the initialized flag
+        if (!currentUserIds.has(oduderId)) {
+          try {
+            marker.setMap(null);
+          } catch (e) {
+            console.log(e);
+            // Ignore cleanup errors
+          }
+          markersRef.current.delete(oduderId);
+          const overlay = overlaysRef.current.get(oduderId);
+          if (overlay) {
+            try {
+              overlay.setMap(null);
+            } catch (e) {
+              console.log(e);
+              // Ignore cleanup errors
+            }
+            overlaysRef.current.delete(oduderId);
+          }
         }
-      }
-    });
+      });
 
-    // Update or create markers for current users
-    allUsers.forEach((user) => {
-      if (user.latitude === null || user.longitude === null) return;
+      // Update or create markers for current users
+      allUsers.forEach((user) => {
+        if (user.latitude === null || user.longitude === null) return;
 
-      const position = new window.kakao.maps.LatLng(
-        user.latitude,
-        user.longitude
-      );
+        const position = new window.kakao.maps.LatLng(
+          user.latitude,
+          user.longitude
+        );
 
-      const marker = markersRef.current.get(user.id);
-      const overlay = overlaysRef.current.get(user.id);
+        const marker = markersRef.current.get(user.id);
+        const overlay = overlaysRef.current.get(user.id);
 
-      if (marker) {
-        // Update existing marker position
-        marker.setPosition(position);
-        if (overlay) {
-          overlay.setPosition(position);
+        if (marker && marker !== true) {
+          // Update existing marker position
+          try {
+            marker.setPosition(position);
+            if (overlay) {
+              overlay.setPosition(position);
+            }
+          } catch (e) {
+            console.log(e);
+            // If update fails, recreate marker
+            markersRef.current.delete(user.id);
+            overlaysRef.current.delete(user.id);
+          }
         }
-      } else {
-        // Create new marker with custom styling
-        const markerContent = document.createElement("div");
-        markerContent.innerHTML = `
-          <div style="
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-          ">
+
+        if (!markersRef.current.has(user.id)) {
+          // Create new marker with custom styling
+          const markerContent = document.createElement("div");
+          markerContent.innerHTML = `
             <div style="
-              width: 40px;
-              height: 40px;
-              background-color: ${user.color};
-              border-radius: 50%;
-              border: 3px solid white;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              position: relative;
               display: flex;
+              flex-direction: column;
               align-items: center;
-              justify-content: center;
-              font-size: 14px;
-              font-weight: bold;
-              color: white;
             ">
-              ${user.name.charAt(0).toUpperCase()}
+              <div style="
+                width: 40px;
+                height: 40px;
+                background-color: ${user.color};
+                border-radius: 50%;
+                border: 3px solid white;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                font-weight: bold;
+                color: white;
+              ">
+                ${user.name.charAt(0).toUpperCase()}
+              </div>
+              <div style="
+                width: 0;
+                height: 0;
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-top: 10px solid ${user.color};
+                margin-top: -2px;
+              "></div>
             </div>
+          `;
+
+          const customOverlay = new window.kakao.maps.CustomOverlay({
+            position: position,
+            content: markerContent,
+            yAnchor: 1,
+          });
+          customOverlay.setMap(map);
+          markersRef.current.set(user.id, customOverlay);
+
+          // Create name overlay
+          const nameContent = document.createElement("div");
+          nameContent.innerHTML = `
             <div style="
-              width: 0;
-              height: 0;
-              border-left: 8px solid transparent;
-              border-right: 8px solid transparent;
-              border-top: 10px solid ${user.color};
-              margin-top: -2px;
-            "></div>
-          </div>
-        `;
+              background-color: white;
+              padding: 4px 8px;
+              border-radius: 12px;
+              font-size: 12px;
+              font-weight: 600;
+              color: #374151;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+              white-space: nowrap;
+              margin-top: 4px;
+            ">
+              ${user.name}${user.id === currentUser?.id ? " (나)" : ""}
+            </div>
+          `;
 
-        const customOverlay = new window.kakao.maps.CustomOverlay({
-          position: position,
-          content: markerContent,
-          yAnchor: 1,
-        });
-        customOverlay.setMap(map);
-        markersRef.current.set(user.id, customOverlay);
+          const nameOverlay = new window.kakao.maps.CustomOverlay({
+            position: position,
+            content: nameContent,
+            yAnchor: 2.5,
+          });
+          nameOverlay.setMap(map);
+          overlaysRef.current.set(user.id, nameOverlay);
+        }
+      });
 
-        // Create name overlay
-        const nameContent = document.createElement("div");
-        nameContent.innerHTML = `
-          <div style="
-            background-color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #374151;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-            white-space: nowrap;
-            margin-top: 4px;
-          ">
-            ${user.name}${user.id === currentUser?.id ? " (나)" : ""}
-          </div>
-        `;
+      // Center map on current user if available
+      if (currentUser?.latitude && currentUser?.longitude) {
+        const currentPosition = new window.kakao.maps.LatLng(
+          currentUser.latitude,
+          currentUser.longitude
+        );
 
-        const nameOverlay = new window.kakao.maps.CustomOverlay({
-          position: position,
-          content: nameContent,
-          yAnchor: 2.5,
-        });
-        nameOverlay.setMap(map);
-        overlaysRef.current.set(user.id, nameOverlay);
+        // Only pan if it's the first location update
+        if (!markersRef.current.has("initialized")) {
+          map.panTo(currentPosition);
+          markersRef.current.set("initialized", true);
+        }
       }
-    });
-
-    // Center map on current user if available
-    if (currentUser?.latitude && currentUser?.longitude) {
-      const currentPosition = new window.kakao.maps.LatLng(
-        currentUser.latitude,
-        currentUser.longitude
-      );
-
-      // Only pan if it's the first location update
-      if (!markersRef.current.has("initialized")) {
-        map.panTo(currentPosition);
-        markersRef.current.set("initialized", true);
-      }
+    } catch (error) {
+      console.error("Error updating markers:", error);
     }
   }, [isMapLoaded, currentUser, users]);
 
