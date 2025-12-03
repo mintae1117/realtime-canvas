@@ -43,7 +43,7 @@ export const LocationMap: React.FC = () => {
     } else {
       // Load Kakao Maps script dynamically
       const script = document.createElement("script");
-      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${
         import.meta.env.VITE_KAKAO_MAP_KEY
       }&autoload=false`;
       script.async = true;
