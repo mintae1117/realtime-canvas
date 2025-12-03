@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import {
   LocationSetup,
   LocationDashboard,
-} from "../components/realtimeLocation";
+} from "../components/realtimeSatellite";
 import { useLocationStore } from "../store/locationStore";
 
 export function SatelliteLocation() {
