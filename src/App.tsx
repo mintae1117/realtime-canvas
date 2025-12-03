@@ -34,6 +34,7 @@ function AppContent() {
         <Route path="/satellite" element={<SatelliteLocation />} />
         <Route path="/satellite/:satelliteId" element={<SatelliteLocation />} />
         <Route path="/location" element={<RealtimeLocation />} />
+        <Route path="/location/:roomId" element={<RealtimeLocation />} />
       </Routes>
     </Layout>
   );
