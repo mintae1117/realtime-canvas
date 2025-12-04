@@ -67,7 +67,7 @@
 
 ---
 
-### 5. Realtime Location (ISS Tracker)
+### 5. Realtime Satellite (ISS Tracker)
 
 국제우주정거장(ISS) 실시간 위치 추적
 
@@ -81,6 +81,21 @@
 **데이터 소스**: [Where The ISS At API](https://wheretheiss.at/w/developer)
 
 **주요 컴포넌트**: `LocationDashboard`, `SatelliteMap`, `SatelliteInfo`
+
+---
+
+### 6. Realtime Location
+
+실시간 위치 공유 애플리케이션
+
+| 기능             | 설명                                        |
+| ---------------- | ------------------------------------------- |
+| 실시간 위치 공유 | 여러 사용자가 자신의 위치를 실시간으로 공유 |
+| 위치 추적        | Geolocation API 기반 현재 위치 추적         |
+| 방 시스템        | 고유 URL로 위치 공유 방 생성 및 참여        |
+| 사용자 표시      | 지도에서 모든 참가자 위치를 실시간 표시     |
+
+**주요 컴포넌트**: `LocationRoom`, `LocationMap`, `LocationControls`, `LocationRoomSetup`
 
 ---
 
@@ -125,6 +140,7 @@ src/
 │   ├── RealtimeChat.tsx
 │   ├── RealtimeFacetime.tsx
 │   ├── RealtimeMonitoring.tsx
+│   ├── SatelliteLocation.tsx
 │   └── RealtimeLocation.tsx
 │
 ├── components/               # 기능별 컴포넌트
@@ -133,7 +149,8 @@ src/
 │   ├── realtimeChat/        # Chat 관련
 │   ├── realtimeFacetime/    # Facetime 관련
 │   ├── realtimeMonitoring/  # Monitoring 관련
-│   └── realtimeLocation/    # Location 관련
+│   ├── realtimeSatellite/   # Satellite 관련 (ISS 추적)
+│   └── realtimeLocation/    # Location 관련 (위치 공유)
 │
 ├── hooks/                    # 커스텀 훅
 ├── store/                    # Zustand 스토어
