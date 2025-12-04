@@ -1,19 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCanvasStore, createUser } from "../../store/canvasStore";
-import { type UserRole } from "../../types/canvas";
-import {
-  FaBook,
-  FaChalkboardTeacher,
-  FaUserGraduate,
-  FaDice,
-  FaLightbulb,
-  FaRocket,
-} from "react-icons/fa";
+import { FaPaintBrush, FaDice, FaLightbulb, FaRocket } from "react-icons/fa";
 
 export const RoomSetup: React.FC = () => {
   const [name, setName] = useState("");
-  const [role, setRole] = useState<UserRole>("student");
   const [roomId, setRoomId] = useState("");
   const { setCurrentUser, setRoomId: setStoreRoomId } = useCanvasStore();
   const navigate = useNavigate();
@@ -26,7 +17,7 @@ export const RoomSetup: React.FC = () => {
       return;
     }
 
-    const user = createUser(name.trim(), role);
+    const user = createUser(name.trim());
     setCurrentUser(user);
     setStoreRoomId(roomId.trim());
     navigate(`/canvas/${roomId.trim()}`);
@@ -40,22 +31,20 @@ export const RoomSetup: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex items-center justify-center p-2">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-sm sm:max-w-md overflow-hidden">
-        {/* Header Section - 줄임 */}
+        {/* Header Section */}
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-6">
           <div className="text-center">
             <div className="mb-2">
-              <FaBook className="text-4xl text-white inline-block" />
+              <FaPaintBrush className="text-4xl text-white inline-block" />
             </div>
-            <h1 className="text-xl font-bold text-white mb-1">
-              실시간 학습 캔버스
-            </h1>
+            <h1 className="text-xl font-bold text-white mb-1">실시간 캔버스</h1>
             <p className="text-blue-100 text-sm">
-              선생님과 학생이 함께 문제를 풀어요
+              함께 그림을 그리고 아이디어를 공유해요
             </p>
           </div>
         </div>
 
-        {/* Form Section - 전체 padding 감소 */}
+        {/* Form Section */}
         <form onSubmit={handleSubmit} className="px-5 py-6 space-y-4">
           {/* Name Input */}
           <div>
@@ -70,44 +59,6 @@ export const RoomSetup: React.FC = () => {
               className="w-full px-3 py-2 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               required
             />
-          </div>
-
-          {/* Role Selection */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              역할
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setRole("teacher")}
-                className={`px-3 py-3 rounded-lg font-semibold transition-all text-sm ${
-                  role === "teacher"
-                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md scale-105 ring-2 ring-blue-300"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95"
-                }`}
-              >
-                <div className="flex flex-col items-center space-y-1">
-                  <FaChalkboardTeacher className="text-xl" />
-                  <span>선생님</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRole("student")}
-                className={`px-3 py-3 rounded-lg font-semibold transition-all text-sm ${
-                  role === "student"
-                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md scale-105 ring-2 ring-blue-300"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95"
-                }`}
-              >
-                <div className="flex flex-col items-center space-y-1">
-                  <FaUserGraduate className="text-xl" />
-                  <span>학생</span>
-                </div>
-              </button>
-            </div>
           </div>
 
           {/* Room ID Input */}
@@ -138,7 +89,7 @@ export const RoomSetup: React.FC = () => {
               <p className="text-blue-700 flex items-start">
                 <FaLightbulb className="mr-1 mt-0.5 flex-shrink-0 text-yellow-500" />
                 <span>
-                  같은 방 ID를 사용하면 여러 명이 함께 학습할 수 있어요
+                  같은 방 ID를 사용하면 여러 명이 함께 그림을 그릴 수 있어요
                 </span>
               </p>
             </div>

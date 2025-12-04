@@ -6,7 +6,6 @@ import {
   type TextAnnotation,
   type DrawingTool,
   type User,
-  type UserRole,
 } from "../types/canvas";
 
 interface CanvasStore {
@@ -198,10 +197,9 @@ export const useCanvasStore = create<CanvasStore>((set) => ({
     }),
 }));
 
-export const createUser = (name: string, role: UserRole): User => ({
+export const createUser = (name: string): User => ({
   id: uuidv4(),
   name,
-  role,
   color: getRandomColor(),
   isOnline: true,
 });

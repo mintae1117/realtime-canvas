@@ -1,7 +1,5 @@
 export type DrawingTool = "pen" | "eraser" | "select" | "text";
 
-export type UserRole = "teacher" | "student";
-
 export interface Point {
   x: number;
   y: number;
@@ -44,7 +42,6 @@ export interface TextAnnotation {
 export interface User {
   id: string;
   name: string;
-  role: UserRole;
   color: string;
   isOnline: boolean;
 }
