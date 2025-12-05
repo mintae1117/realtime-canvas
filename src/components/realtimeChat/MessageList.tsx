@@ -73,7 +73,7 @@ export const MessageList: React.FC = () => {
                       style={{ backgroundColor: "#ffffff" }}
                     >
                       <p
-                        className="text-sm whitespace-pre-wrap break-words"
+                        className="text-sm whitespace-pre-wrap break-all"
                         style={{ color: "#1f2937" }}
                       >
                         {message.text}
@@ -104,7 +104,7 @@ export const MessageList: React.FC = () => {
                   style={{ backgroundColor: "#FEE500" }}
                 >
                   <p
-                    className="text-sm whitespace-pre-wrap break-words"
+                    className="text-sm whitespace-pre-wrap break-all"
                     style={{ color: "#1f2937" }}
                   >
                     {message.text}
