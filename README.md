@@ -51,7 +51,23 @@
 
 ---
 
-### 4. Realtime Monitoring
+### 4. Realtime Screen Share
+
+실시간 화면 공유 (WebRTC)
+
+| 기능           | 설명                                 |
+| -------------- | ------------------------------------ |
+| 화면 공유      | WebRTC 기반 실시간 화면 공유         |
+| 다자간 공유    | 여러 사용자가 동시에 화면 공유 가능  |
+| 전체화면 보기  | 공유된 화면을 전체화면으로 확대      |
+| 방 시스템      | 고유 URL로 화면 공유 방 생성 및 참여 |
+| 공유 상태 표시 | 현재 화면을 공유 중인 사용자 표시    |
+
+**주요 컴포넌트**: `ScreenShareRoom`, `ScreenGrid`, `ScreenShareControls`, `ScreenShareRoomSetup`
+
+---
+
+### 6. Realtime Monitoring
 
 실시간 암호화폐 모니터링 대시보드
 
@@ -67,7 +83,7 @@
 
 ---
 
-### 5. Realtime Satellite (ISS Tracker)
+### 7. Realtime Satellite (ISS Tracker)
 
 국제우주정거장(ISS) 실시간 위치 추적
 
@@ -84,7 +100,7 @@
 
 ---
 
-### 6. Realtime Location
+### 8. Realtime Location
 
 실시간 위치 공유 애플리케이션
 
@@ -139,6 +155,7 @@ src/
 │   ├── RealtimeCanvas.tsx
 │   ├── RealtimeChat.tsx
 │   ├── RealtimeFacetime.tsx
+│   ├── RealtimeScreenShare.tsx
 │   ├── RealtimeMonitoring.tsx
 │   ├── SatelliteLocation.tsx
 │   └── RealtimeLocation.tsx
@@ -148,6 +165,7 @@ src/
 │   ├── realtimeCanvas/      # Canvas 관련
 │   ├── realtimeChat/        # Chat 관련
 │   ├── realtimeFacetime/    # Facetime 관련
+│   ├── realtimeScreen/      # Screen Share 관련 (화면 공유)
 │   ├── realtimeMonitoring/  # Monitoring 관련
 │   ├── realtimeSatellite/   # Satellite 관련 (ISS 추적)
 │   └── realtimeLocation/    # Location 관련 (위치 공유)

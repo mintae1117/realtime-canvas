@@ -8,6 +8,7 @@ import {
   IoStatsChartOutline,
   IoLocationOutline,
   IoPlanetOutline,
+  IoDesktopOutline,
 } from "react-icons/io5";
 
 interface LayoutProps {
@@ -22,6 +23,7 @@ export function Layout({ children }: LayoutProps) {
     { path: "/canvas", icon: IoColorPaletteOutline, label: "캔버스" },
     { path: "/chat", icon: IoChatbubbleEllipsesOutline, label: "채팅" },
     { path: "/facetime", icon: IoVideocamOutline, label: "화상통화" },
+    { path: "/screen", icon: IoDesktopOutline, label: "화면공유" },
     { path: "/monitoring", icon: IoStatsChartOutline, label: "모니터링" },
     { path: "/satellite", icon: IoPlanetOutline, label: "위성위치" },
     { path: "/location", icon: IoLocationOutline, label: "위치공유" },

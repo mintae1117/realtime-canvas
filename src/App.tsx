@@ -7,6 +7,7 @@ import { RealtimeFacetime } from "./pages/RealtimeFacetime";
 import { RealtimeMonitoring } from "./pages/RealtimeMonitoring";
 import { SatelliteLocation } from "./pages/SatelliteLocation";
 import { RealtimeLocation } from "./pages/RealtimeLocation";
+import { RealtimeScreenShare } from "./pages/RealtimeScreenShare";
 
 function AppContent() {
   const location = useLocation();
@@ -35,6 +36,8 @@ function AppContent() {
         <Route path="/satellite/:satelliteId" element={<SatelliteLocation />} />
         <Route path="/location" element={<RealtimeLocation />} />
         <Route path="/location/:roomId" element={<RealtimeLocation />} />
+        <Route path="/screen" element={<RealtimeScreenShare />} />
+        <Route path="/screen/:roomId" element={<RealtimeScreenShare />} />
       </Routes>
     </Layout>
   );

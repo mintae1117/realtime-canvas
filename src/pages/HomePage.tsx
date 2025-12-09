@@ -6,6 +6,7 @@ import {
   FaChartBar,
   FaMapMarkerAlt,
   FaSatellite,
+  FaDesktop,
 } from "react-icons/fa";
 
 export function HomePage() {
@@ -27,6 +28,12 @@ export function HomePage() {
       title: "Realtime Facetime",
       description: "실시간 화상 통화",
       icon: <FaVideo className="text-6xl text-green-500" />,
+    },
+    {
+      path: "/screen",
+      title: "Realtime Screen Share",
+      description: "실시간 화면 공유",
+      icon: <FaDesktop className="text-6xl text-cyan-500" />,
     },
     {
       path: "/monitoring",
