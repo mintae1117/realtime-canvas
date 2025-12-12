@@ -18,7 +18,10 @@ const ICE_SERVERS: RTCConfiguration = {
 
 // Signaling event types
 type SignalingEvent =
-  | { type: "offer"; data: { from: string; offer: RTCSessionDescriptionInit } }
+  | {
+      type: "offer";
+      data: { from: string; to?: string; offer: RTCSessionDescriptionInit };
+    }
   | {
       type: "answer";
       data: { from: string; answer: RTCSessionDescriptionInit };
@@ -30,7 +33,8 @@ type SignalingEvent =
   | { type: "user-joined"; data: { user: ScreenShareUser } }
   | { type: "user-left"; data: { userId: string } }
   | { type: "share-started"; data: { userId: string } }
-  | { type: "share-stopped"; data: { userId: string } };
+  | { type: "share-stopped"; data: { userId: string } }
+  | { type: "request-stream"; data: { from: string; to: string } };
 
 export const useRealtimeScreenShare = (roomId: string | null) => {
   const channelRef = useRef<RealtimeChannel | null>(null);
@@ -236,12 +240,36 @@ export const useRealtimeScreenShare = (roomId: string | null) => {
 
         case "share-started": {
           updateUserSharing(event.data.userId, true);
+          // Request stream from the user who started sharing
+          // The sharer will receive this and send us an offer
+          if (channelRef.current && currentUser) {
+            channelRef.current.send({
+              type: "broadcast",
+              event: "signaling",
+              payload: {
+                type: "request-stream",
+                data: {
+                  from: currentUser.id,
+                  to: event.data.userId,
+                },
+              } as SignalingEvent,
+            });
+          }
           break;
         }
 
         case "share-stopped": {
           updateUserSharing(event.data.userId, false);
           removeRemoteStream(event.data.userId);
+          break;
+        }
+
+        case "request-stream": {
+          // Someone is requesting our stream
+          if (event.data.to === currentUser?.id && isSharing && localStream) {
+            // Send offer to the requester
+            await sendOffer(event.data.from);
+          }
           break;
         }
       }
@@ -279,6 +307,13 @@ export const useRealtimeScreenShare = (roomId: string | null) => {
 
     // Notify others that we stopped sharing
     if (channelRef.current && user) {
+      // Update presence with isSharing status
+      channelRef.current.track({
+        user: user,
+        isSharing: false,
+        online_at: new Date().toISOString(),
+      });
+
       channelRef.current.send({
         type: "broadcast",
         event: "signaling",
@@ -322,6 +357,13 @@ export const useRealtimeScreenShare = (roomId: string | null) => {
 
       // Notify others that we started sharing
       if (channelRef.current && currentUser) {
+        // Update presence with isSharing status
+        await channelRef.current.track({
+          user: currentUser,
+          isSharing: true,
+          online_at: new Date().toISOString(),
+        });
+
         channelRef.current.send({
           type: "broadcast",
           event: "signaling",
@@ -402,6 +444,22 @@ export const useRealtimeScreenShare = (roomId: string | null) => {
           presences.forEach((presence: any) => {
             if (presence.user && presence.user.id !== currentUser.id) {
               addUser(presence.user);
+              // If this user has isSharing in their presence data, update their sharing status
+              if (presence.isSharing) {
+                updateUserSharing(presence.user.id, true);
+                // Request their stream
+                channel.send({
+                  type: "broadcast",
+                  event: "signaling",
+                  payload: {
+                    type: "request-stream",
+                    data: {
+                      from: currentUser.id,
+                      to: presence.user.id,
+                    },
+                  } as SignalingEvent,
+                });
+              }
             }
           });
         });
@@ -439,8 +497,10 @@ export const useRealtimeScreenShare = (roomId: string | null) => {
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
+          const currentIsSharing = useScreenShareStore.getState().isSharing;
           await channel.track({
             user: currentUser,
+            isSharing: currentIsSharing,
             online_at: new Date().toISOString(),
           });
           setIsConnected(true);
