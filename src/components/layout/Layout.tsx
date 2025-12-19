@@ -70,8 +70,8 @@ export function Layout({ children }: LayoutProps) {
         {children}
       </main>
 
-      {/* Mobile Footer Navigation - 모바일에서만 표시, sticky로 변경 */}
-      <footer className="md:hidden sticky bottom-0 left-0 right-0 bg-white border-t shadow-lg z-20">
+      {/* Mobile Footer Navigation - 모바일에서만 표시 */}
+      <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-20">
         <nav className="flex justify-around items-center h-16">
           {routes.map((route) => {
             const Icon = route.icon;
