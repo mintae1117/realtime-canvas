@@ -32,10 +32,10 @@ export function Layout({ children }: LayoutProps) {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden relative">
+    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden relative bg-slate-900">
       {/* Desktop Mini Navbar - 왼쪽 하단에 최소화된 상태 */}
       <div className="hidden md:block fixed bottom-4 left-4 z-40">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-2">
+        <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-700/50 p-2">
           <nav className="flex flex-col gap-1">
             {routes.map((route) => {
               const Icon = route.icon;
@@ -44,18 +44,18 @@ export function Layout({ children }: LayoutProps) {
                   key={route.path}
                   to={route.path}
                   className={`
-                    group relative flex items-center justify-center p-2 rounded-xl
-                    transition-all duration-200
+                    group relative flex items-center justify-center p-2.5 rounded-xl
+                    transition-all duration-300
                     ${
                       isActive(route.path)
-                        ? "bg-blue-500 text-white shadow-md"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                        ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/25"
+                        : "text-slate-400 hover:bg-slate-700/50 hover:text-cyan-400"
                     }
                   `}
                 >
                   <Icon className="text-xl" />
                   {/* Tooltip */}
-                  <span className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                  <span className="absolute left-full ml-3 px-3 py-1.5 bg-slate-800 text-cyan-400 text-xs font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none border border-slate-700/50 shadow-lg">
                     {route.label}
                   </span>
                 </Link>
@@ -71,7 +71,7 @@ export function Layout({ children }: LayoutProps) {
       </main>
 
       {/* Mobile Footer Navigation - 모바일에서만 표시 */}
-      <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-20">
+      <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-800/90 backdrop-blur-md border-t border-slate-700/50 z-20">
         <nav className="flex justify-around items-center h-16">
           {routes.map((route) => {
             const Icon = route.icon;
@@ -81,12 +81,25 @@ export function Layout({ children }: LayoutProps) {
                 to={route.path}
                 className={`
                   flex flex-col items-center justify-center flex-1 h-full
-                  transition-all duration-200
-                  ${isActive(route.path) ? "text-blue-500" : "text-gray-500"}
+                  transition-all duration-300
+                  ${
+                    isActive(route.path)
+                      ? "text-cyan-400"
+                      : "text-slate-500 hover:text-slate-300"
+                  }
                 `}
               >
-                <Icon className="text-xl mb-1" />
-                <span className="text-xs">{route.label}</span>
+                <div
+                  className={`
+                    p-1.5 rounded-lg transition-all duration-300
+                    ${isActive(route.path) ? "bg-cyan-500/20" : ""}
+                  `}
+                >
+                  <Icon className="text-xl" />
+                </div>
+                <span className="text-xs mt-0.5 font-medium">
+                  {route.label}
+                </span>
               </Link>
             );
           })}
